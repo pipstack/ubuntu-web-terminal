@@ -53,7 +53,11 @@ app.post("/login", (req, res) => {
 });
 
 wss.on("connection", (ws, req) => {
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    const url = new URL(
+        req.url,
+        `http://${req.headers.host}`
+    );
+
     const token = url.searchParams.get("token");
 
     if (!token || !sessions.has(token)) {
@@ -69,9 +73,12 @@ wss.on("connection", (ws, req) => {
         env: {
             ...process.env,
             TERM: "xterm-256color",
-            PS1: "root@ubuntu:~# "
+            PS1: "root@pentest-lab:~# "
         }
     });
+
+    shell.write("hostname pentest-lab\r");
+    shell.write("export PS1='root@pentest-lab:~# '\r");
 
     shell.onData((data) => {
         if (ws.readyState === ws.OPEN) {
@@ -92,6 +99,7 @@ wss.on("connection", (ws, req) => {
         if (ws.readyState === ws.OPEN) {
             ws.close();
         }
+
         sessions.delete(token);
     });
 });
